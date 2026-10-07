@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Military Time Converter Demo</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 520px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; }
+  h1 { font-size: 1.6rem; }
+  .card { border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-top: 20px; }
+  input { width: 100%; padding: 10px; font-size: 1rem; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+  button { padding: 10px 18px; font-size: 1rem; border: 0; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; }
+  button:hover { background: #1d4ed8; }
+  #result { margin-top: 16px; font-size: 1.25rem; font-weight: 600; }
+  .hint { color: #666; font-size: 0.9rem; }
+  footer { margin-top: 32px; font-size: 0.9rem; color: #555; }
+</style>
+</head>
+<body>
+  <h1>Military Time Converter</h1>
+  <p class="hint">Try <code>2:30 PM</code> → <code>14:30</code>, or <code>14:30</code> → <code>2:30 PM</code></p>
+
+  <div class="card">
+    <input id="input" placeholder='e.g. 2:30 PM or 14:30' value="2:30 PM" />
+    <button onclick="doConvert()">Convert</button>
+    <div id="result"></div>
+  </div>
+
+  <footer>
+    Full converter with chart &amp; examples:
+    <a href="https://militarytimeconverters.com">militarytimeconverters.com</a>
+  </footer>
+
+<script type="module">
+  function toMilitary(hours, minutes, period) {
+    let h = hours % 12;
+    if (period.toUpperCase() === 'PM') h += 12;
+    return `${String(h).padStart(2,'0')}:${String(minutes).padStart(2,'0')}`;
+  }
+  function fromMilitary(hours, minutes) {
+    const period = hours < 12 ? 'AM' : 'PM';
+    const h12 = hours % 12 === 0 ? 12 : hours % 12;
+    return `${h12}:${String(minutes).padStart(2,'0')} ${period}`;
+  }
+  function convert(input) {
+    const s = input.trim().toUpperCase();
+    let m = s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+    if (m) return toMilitary(parseInt(m[1]), parseInt(m[2]), m[3]);
+    m = s.match(/^(\d{1,2}):?(\d{2})$/);
+    if (m) return fromMilitary(parseInt(m[1]), parseInt(m[2]));
+    throw new Error('Use "2:30 PM" or "14:30"');
+  }
+  window.doConvert = () => {
+    const el = document.getElementById('input');
+    const out = document.getElementById('result');
+    try { out.textContent = convert(el.value); }
+    catch(e){ out.textContent = e.message; }
+  };
+  doConvert();
+</script>
+</body>
+</html>
